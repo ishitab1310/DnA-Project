@@ -1,15 +1,36 @@
 import mysql.connector
 
 # Establish a connection to the database
-connection = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    password='sql_utsav',
-    database='flight_management_system'
-)
+def create_connection():
+    connection = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='password',
+        database='flight_management_system'
+    )
+    cursor = connection.cursor()
+    return connection, cursor
 
-# Create a cursor object
-cursor = connection.cursor()
+# Close the cursor and connection
+def close_connection(cursor, connection):
+    cursor.close()
+    connection.close()
+
+# Function to execute SQL queries
+def execute_query(query):
+    connection, cursor = create_connection()
+    if connection and cursor:
+        try:
+            cursor.execute(query)
+            result = cursor.fetchall()
+            for row in result:
+                print(row)
+        except mysql.connector.Error as err:
+            print(f"Error executing query: {err}")
+        finally:
+            close_connection(cursor, connection)
+    else:
+        print("Failed to connect to the database.")
 
 # Function for Retrieve Operations
 def retrieve_operations():
@@ -28,36 +49,36 @@ def retrieve_operations():
     choice = input("Enter your choice (0-9): ")
 
     if choice == '1':
-        # TODO: Implement Retrieve Operation 1
-        pass
+        specific_flight_id = input("Enter the specific flight ID: ")
+        query = f"""
+            SELECT Passenger.*
+            FROM Passenger
+            JOIN Reservation ON Passenger.passenger_id = Reservation.passenger_id
+            WHERE Reservation.flight_id = '{specific_flight_id}';
+        """
+        execute_query(query)
 
     elif choice == '2':
-        # TODO: Implement Retrieve Operation 2
-        pass
+        specific_location = input("Enter the specific location: ")
+        given_date = input("Enter the given date (YYYY-MM-DD): ")
+        query = f"""
+            SELECT Flight.*
+            FROM Flight
+            WHERE Flight.from_location = '{specific_location}'
+            AND DATE(Flight.arrival_departure_time) = '{given_date}';
+        """
+        execute_query(query)
 
     elif choice == '3':
-        # TODO: Implement Retrieve Operation 3
-        pass
+        query = """
+            SELECT Airplane.*
+            FROM Airplane
+            JOIN Maintenance_History ON Airplane.airplane_number = Maintenance_History.airplane_number
+            WHERE Maintenance_History.date BETWEEN CURDATE() AND CURDATE() + INTERVAL 7 DAY;
+        """
+        execute_query(query)
 
-    elif choice == '4':
-        # TODO: Implement Retrieve Operation 4
-        pass
-
-    elif choice == '5':
-        # TODO: Implement Retrieve Operation 5
-        pass
-
-    elif choice == '6':
-        # TODO: Implement Retrieve Operation 6
-        pass
-
-    elif choice == '7':
-        # TODO: Implement Retrieve Operation 7
-        pass
-
-    elif choice == '8':
-        # TODO: Implement Retrieve Operation 8
-        pass
+    ## Add more cases as needed
 
     elif choice == '9':
         search_operations()
@@ -127,8 +148,3 @@ while True:
 
     else:
         print("Invalid choice. Please enter 1 or 2.")
-
-# Close the cursor and connection
-cursor.close()
-connection.close()
-
