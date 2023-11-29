@@ -1,6 +1,5 @@
 import pymysql
 
-# Replace 'your_table' with the actual table name
 table_name = 'Airplane'
 
 # Establish a connection to the database
