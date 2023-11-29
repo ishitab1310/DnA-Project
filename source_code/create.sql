@@ -1,6 +1,6 @@
 -- create_database.sql
-CREATE DATABASE IF NOT EXISTS flight_management_system;
-USE flight_management_system;
+CREATE DATABASE IF NOT EXISTS `flight_management_system`;
+USE `flight_management_system`;
 
 CREATE TABLE Airplane (
     airplane_number INT PRIMARY KEY,
