@@ -7,7 +7,22 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(45deg, #2d2d2d, #1a1a1a);
+            color: white;
+        }
+
+        #container {
+            width: 80%;
+            max-width: 600px;
+            background: linear-gradient(45deg, #333, #222);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
 
         h1 {
@@ -41,7 +56,11 @@
             background-color: #45a049;
         }
 
-        #result {
+        #querySection {
+            margin-top: 20px;
+        }
+
+        #resultSection {
             margin-top: 20px;
         }
 
@@ -64,23 +83,28 @@
     </style>
 </head>
 <body>
-    <h1>Flight Management System</h1>
+    <div id="container">
+        <h1>Flight Management System</h1>
+        <div id="querySection">
+            <label for="queryType">Select Query Type:</label>
+            <select id="queryType">
+                <option value="1">Retrieve Passengers on a Flight</option>
+                <option value="2">Retrieve Flights from a Location</option>
+                <option value="3">Retrieve Aircraft for Maintenance</option>
+                <!-- Add more options as needed -->
+            </select>
 
-    <label for="queryType">Select Query Type:</label>
-    <select id="queryType">
-        <option value="1">Retrieve Passengers on a Flight</option>
-        <option value="2">Retrieve Flights from a Location</option>
-        <option value="3">Retrieve Aircraft for Maintenance</option>
-        <!-- Add more options as needed -->
-    </select>
+            <div id="queryParameters">
+                <!-- Additional input fields based on the selected query type will be added here -->
+            </div>
 
-    <div id="queryParameters">
-        <!-- Additional input fields based on the selected query type will be added here -->
+            <button onclick="executeQuery()">Execute Query</button>
+        </div>
+        
+        <div id="resultSection">
+            <div id="result"></div>
+        </div>
     </div>
-
-    <button onclick="executeQuery()">Execute Query</button>
-
-    <div id="result"></div>
 
     <script>
         async function executeQuery() {
