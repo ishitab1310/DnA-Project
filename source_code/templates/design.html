@@ -181,13 +181,13 @@
             const table = document.createElement('table');
             const headerRow = table.insertRow(0);
 
-            // Create header cells
-            for (const key in result[0]) {
-                const th = document.createElement('th');
-                th.textContent = key;
-                headerRow.appendChild(th);
-            }
-
+            // Create header cells dynamically based on queryType
+        const columnHeaders = Object.keys(result[0]);
+        for (const header of columnHeaders) {
+            const th = document.createElement('th');
+            th.textContent = header;
+            headerRow.appendChild(th);
+        }
             // Create data rows
             for (const row of result) {
                 const tr = table.insertRow();
