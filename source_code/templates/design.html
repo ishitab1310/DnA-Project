@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Flight Management System</h1>
+
+    <label for="queryType">Select Query Type:</label>
+    <select id="queryType">
+        <option value="1">Retrieve Passengers on a Flight</option>
+        <option value="2">Retrieve Flights from a Location</option>
+        <option value="3">Retrieve Aircraft for Maintenance</option>
+        <!-- Add more options as needed -->
+    </select>
+
+    <div id="queryParameters">
+        <!-- Additional input fields based on the selected query type will be added here -->
+    </div>
+
+    <button onclick="executeQuery()">Execute Query</button>
+
+    <div id="result"></div>
+
+    <script>
+        async function executeQuery() {
+            const queryType = document.getElementById('queryType').value;
+            let query = '';
+    
+            switch (queryType) {
+                case '1':
+                    const specificFlightId = prompt('Enter the specific flight ID:');
+                    query = `
+                        SELECT Passenger.*
+                        FROM Passenger
+                        JOIN Reservation ON Passenger.passenger_id = Reservation.passenger_id
+                        WHERE Reservation.flight_id = '${specificFlightId}';
+                    `;
+                    break;
+    
+                case '2':
+                    const specificLocation = prompt('Enter the specific location:');
+                    const givenDate = prompt('Enter the given date (YYYY-MM-DD):');
+                    query = `
+                        SELECT Flight.*
+                        FROM Flight
+                        WHERE Flight.from_location = '${specificLocation}'
+                        AND DATE(Flight.arrival_departure_time) = '${givenDate}';
+                    `;
+                    break;
+    
+                case '3':
+                    query = `
+                        SELECT Airplane.*
+                        FROM Airplane
+                        JOIN Maintenance_History ON Airplane.airplane_number = Maintenance_History.airplane_number
+                        WHERE Maintenance_History.date BETWEEN CURDATE() AND CURDATE() + INTERVAL 7 DAY;
+                    `;
+                    break;
+    
+                // Add more cases as needed
+    
+                default:
+                    break;
+            }
+    
+            try {
+                const response = await fetch('http://localhost:5000/execute_query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query }),
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+    
+                const result = await response.json();
+                displayResult(result);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error fetching data from the server.');
+            }
+        }
+        function displayResult(result) {
+            const resultContainer = document.getElementById('result');
+            resultContainer.innerHTML = '';
+
+            if (result.length === 0) {
+                resultContainer.innerHTML = '<p>No results found.</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+            const headerRow = table.insertRow(0);
+
+            // Create header cells
+            for (const key in result[0]) {
+                const th = document.createElement('th');
+                th.textContent = key;
+                headerRow.appendChild(th);
+            }
+
+            // Create data rows
+            for (const row of result) {
+                const tr = table.insertRow();
+                for (const key in row) {
+                    const td = tr.insertCell();
+                    td.textContent = row[key];
+                }
+            }
+
+            resultContainer.appendChild(table);
+        }
+    </script>
+</body>
+</html>
