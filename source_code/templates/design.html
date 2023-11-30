@@ -110,7 +110,7 @@
         async function executeQuery() {
             const queryType = document.getElementById('queryType').value;
             let query = '';
-    
+        
             switch (queryType) {
                 case '1':
                     const specificFlightId = prompt('Enter the specific flight ID:');
@@ -121,7 +121,7 @@
                         WHERE Reservation.flight_id = '${specificFlightId}';
                     `;
                     break;
-    
+        
                 case '2':
                     const specificLocation = prompt('Enter the specific location:');
                     const givenDate = prompt('Enter the given date (YYYY-MM-DD):');
@@ -132,7 +132,7 @@
                         AND DATE(Flight.arrival_departure_time) = '${givenDate}';
                     `;
                     break;
-    
+        
                 case '3':
                     query = `
                         SELECT Airplane.*
@@ -141,13 +141,13 @@
                         WHERE Maintenance_History.date BETWEEN CURDATE() AND CURDATE() + INTERVAL 7 DAY;
                     `;
                     break;
-    
+        
                 // Add more cases as needed
-    
+        
                 default:
                     break;
             }
-    
+        
             try {
                 const response = await fetch('http://localhost:5000/execute_query', {
                     method: 'POST',
@@ -156,11 +156,11 @@
                     },
                     body: JSON.stringify({ query }),
                 });
-    
+        
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-    
+        
                 const result = await response.json();
                 displayResult(result);
             } catch (error) {
@@ -168,6 +168,7 @@
                 alert('Error fetching data from the server.');
             }
         }
+        
         function displayResult(result) {
             const resultContainer = document.getElementById('result');
             resultContainer.innerHTML = '';
