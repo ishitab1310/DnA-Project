@@ -91,10 +91,34 @@
                 <option value="1">Retrieve Passengers on a Flight</option>
                 <option value="2">Retrieve Flights from a Location</option>
                 <option value="3">Retrieve Aircraft for Maintenance</option>
+                <option value="4">Baggage Tracking</option>
+                <option value="5">Check Employee Shifts</option>
+                <option value="6">Daily Flight Schedule</option>
+                <option value="7">Aircraft Tracking</option>
+
                 <!-- Add more options as needed -->
             </select>
 
             <div id="queryParameters">
+                <div id="queryParameters4" style="display: none;">
+                    <label for="baggageTrackingId">Enter Baggage ID:</label>
+                    <input type="text" id="baggageTrackingId" placeholder="Baggage ID">
+                </div>
+                
+                <div id="queryParameters5" style="display: none;">
+                    <label for="employeeShiftsFlightId">Enter Flight ID:</label>
+                    <input type="text" id="employeeShiftsFlightId" placeholder="Flight ID">
+                </div>
+                
+                <div id="queryParameters6" style="display: none;">
+                    <label for="flightScheduleDate">Enter Date (YYYY-MM-DD):</label>
+                    <input type="text" id="flightScheduleDate" placeholder="Date">
+                </div>
+                
+                <div id="queryParameters7" style="display: none;">
+                    <label for="aircraftTrackingFlightId">Enter Flight ID:</label>
+                    <input type="text" id="aircraftTrackingFlightId" placeholder="Flight ID">
+                </div>
                 <!-- Additional input fields based on the selected query type will be added here -->
             </div>
 
@@ -142,6 +166,48 @@
                     `;
                     break;
         
+                    case '4':
+                    const baggageTrackingId = prompt('Enter the baggage ID:');
+                    query = `
+                    SELECT Reservation.id, Passenger.name
+                    FROM Reservation
+                    JOIN Passenger ON Reservation.passenger_id = Passenger.passenger_id
+                    JOIN Baggage ON Passenger.passenger_id = Baggage.passenger_id
+                    WHERE Baggage.tag_index = '${baggageTrackingId}';
+                    `;
+                    break;
+                
+                case '5':
+                    const employeeShiftsFlightId = prompt('Enter the flight ID:');
+                    query = `
+                        SELECT Employee.e_name, Employee.phone_number
+                        FROM Employee
+                        JOIN Flight ON Employee.employee_id = Flight.id
+                        WHERE Flight.id = '${employeeShiftsFlightId}';
+                    `;
+                    break;
+                
+                case '6':
+                    const flightScheduleDate = prompt('Enter the date (YYYY-MM-DD):');
+                    query = `
+                    SELECT Flight.arrival_departure_time, Flight.from_location, Flight.to_location
+                    FROM Flight
+                    WHERE DATE(Flight.arrival_departure_time) = '${flightScheduleDate}'
+                    ORDER BY Flight.arrival_departure_time;
+                `;
+                
+                    break;
+                
+                case '7':
+                    const aircraftTrackingFlightId = prompt('Enter the flight ID:');
+                    query = `
+                        SELECT Airplane.airplane_number, Airplane.airplane_model
+                        FROM Airplane
+                        JOIN Flight ON Airplane.airplane_number = Flight.airplane_number
+                        WHERE Flight.id = '${aircraftTrackingFlightId}';
+                    `;
+                    break;
+                
                 // Add more cases as needed
         
                 default:
