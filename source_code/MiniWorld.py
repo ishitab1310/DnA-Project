@@ -7,7 +7,7 @@ def create_connection():
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='your_new_password',
+        password='',
         database='flight_management_system'
     )
     cursor = connection.cursor()
@@ -49,7 +49,7 @@ def retrieve_operations():
     print("4. Retrieve the reservation ID and passenger name for baggage tracking.")
     print("5. Retrieve the name and phone number of employees for a particular flight to check for incidents during their shifts.")
     print("6. Retrieve the name and airport code of locations to display in a flight schedule.")
-    print("7. Retrieve the aircraft’s unique ID and assigned flight and airplane model name for tracking purposes.")
+    print("7. Retrieve the aircraft's unique ID and assigned flight and airplane model name for tracking purposes.")
     print("8. Passenger Loyalty Program")
     print("9. Search Operations")
     print("0. Back to Main Menu")
@@ -187,8 +187,16 @@ def search_operations():
 
 
     elif choice == '4':
-        pass
-
+        query="""
+            SELECT p.name, p.age, r.date, r.flight_id
+            FROM Passenger p
+            JOIN Reservation r ON p.passenger_id = r.passenger_id
+            JOIN Flight f ON r.flight_id = f.id
+            WHERE p.age BETWEEN 25 AND 40
+            AND f.to_location = 'BOM'
+            AND DATE(r.date) = '2023-05-20';
+        """
+        execute_query(query)
 
     elif choice == '0':
         # Back to Main Menu
@@ -200,22 +208,135 @@ def search_operations():
     # Recursive call for continuous search operations
     search_operations()
 
+def insert_operations():
+    
+    choice=input("Enter Table Name from Passenger, Reservation or Flight: ")
+
+    if choice=="Passenger":
+        passenger_id=input("passenger_id: ")
+        phone_number=input("phone_number: ")
+        age=input("age: ")
+        date_of_birth=input("date_of_birth: ")
+        name=input("name: ")
+        insert_query = "INSERT INTO Passenger (passenger_id, phone_number, age, date_of_birth, name) VALUES (%s, %s, %s, %s, %s)"
+        values = (passenger_id, phone_number, age, date_of_birth, name)
+
+    elif choice=="Reservation":
+        id=input("id: ")
+        flight_id=input("flight_id: ")
+        date=input("date: ")
+        meal=input("meal: ")
+        passenger_id=input("passenger_id: ")
+        flight_number=input("flight_number: ")
+        insert_query = "INSERT INTO Reservation (id, flight_id, date, meal, passenger_id, flight_number) VALUES (%s, %s, %s, %s, %s, %s)"
+        values = (id, flight_id, date, meal, passenger_id, flight_number)
+
+    elif choice=="Flight":
+        id=input("id: ")
+        airplane_number=input("airplane_number: ")
+        from_location=input("from_location: ")
+        to_location=input("to_location: ")
+        arrival_departure_time=input("arrival_departure_time: ")
+        flight_duration=input("flight_duration: ")
+        number_of_layovers=input("number_of_layovers: ")
+        insert_query = "INSERT INTO Flight (id, airplane_number, from_location, to_location, arrival_departure_time, flight_duration, number_of_layovers) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        values = (id, airplane_number, from_location, to_location, arrival_departure_time, flight_duration, number_of_layovers)
+
+    else:
+        print("Invalid choice. Please enter a table from that list.")
+
+    connection, cursor = create_connection()
+    if connection and cursor:
+        try:
+            cursor.execute(insert_query, values)
+            connection.commit()
+            print("Data inserted successfully!")
+        except mysql.connector.Error as error:
+            print("Error inserting data:", error)
+        finally:
+            cursor.close()
+            connection.close()
+    else:
+        print("Failed to connect to the database.")
+
+def update_operations():
+    
+    table_name=input("Enter Table Name: ")
+    column_name=input("Enter the column name you want to update: ")
+    new_value=input("Enter the new value: ")
+    condition=input("Enter condition: ")
+    update_query = f"UPDATE {table_name} SET {column_name} = {new_value} WHERE {condition};"
+
+    connection, cursor = create_connection()
+    if connection and cursor:
+        try:
+            cursor.execute(update_query)
+            connection.commit()
+            print("Data updation successfully!")
+        except mysql.connector.Error as error:
+            print("Error updation data:", error)
+        finally:
+            cursor.close()
+            connection.close()
+    else:
+        print("Failed to connect to the database.")
+
+    # execute_query(update_query)
+
+    print("1. Update query")
+    print("2. Exit")
+    choice=input("Enter your choice (1 or 2): ")
+    
+    if choice==1:
+        update_operations()
+    else:
+        return
+
+def delete_operations():
+
+    print("1. Delete query")
+    print("2. Exit")
+    choice=input("Enter your choice (1 or 2): ")
+    table_name=input("Enter Table Name: ")
+    condition=input("Enter condition: ")
+    delete_query = f"DELETE FROM {table_name} WHERE {condition};"
+    execute_query(delete_query)
+
+    if choice==1:
+        delete_operations()
+    else:
+        return
 
 # Main Menu
 while True:
     print("\nMain Menu:")
     print("1. Retrieve Operations")
-    print("2. Exit")
+    print("2. Insert Operations")
+    print("3. Update Operations")
+    print("4. Delete Operations")
+    print("5. Exit")
 
-    main_choice = input("Enter your choice (1-2): ")
+    main_choice = input("Enter your choice (1-5): ")
 
     if main_choice == '1':
         # Retrieve Operations
         retrieve_operations()
 
     elif main_choice == '2':
+        # Retrieve Operations
+        insert_operations()
+
+    elif main_choice == '3':
+        # Retrieve Operations
+        update_operations()
+
+    elif main_choice == '4':
+        # Retrieve Operations
+        delete_operations()
+
+    elif main_choice == '5':
         # Exit
         break
 
     else:
-        print("Invalid choice. Please enter 1 or 2.")
+        print("Invalid choice. Please enter a number between 1 to 5.")
