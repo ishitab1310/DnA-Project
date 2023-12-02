@@ -37,7 +37,7 @@ CREATE TABLE Location (
     airport_id VARCHAR(255) PRIMARY KEY,
     timezone VARCHAR(255),
     coordinates VARCHAR(255),
-    arrival_departure_time VARCHAR(255),
+    arrival_time VARCHAR(255),
     flight_duration VARCHAR(255)
 );
 
@@ -46,7 +46,7 @@ CREATE TABLE Flight (
     airplane_number INT,
     from_location VARCHAR(255),
     to_location VARCHAR(255),
-    arrival_departure_time TIMESTAMP,
+    arrival_time TIMESTAMP,
     flight_duration DECIMAL(10, 2),
     number_of_layovers INT,
     FOREIGN KEY (airplane_number) REFERENCES Airplane(airplane_number),
@@ -134,7 +134,7 @@ VALUES
 
 
 -- Populate Location Table with Indian Airport Codes
-INSERT INTO Location (airport_id, timezone, coordinates, arrival_departure_time, flight_duration)
+INSERT INTO Location (airport_id, timezone, coordinates, arrival_time, flight_duration)
 VALUES
   ('DEL', 'UTC+5:30', '28.6139° N, 77.2090° E', '08:00 AM - 08:00 PM', '5 hours'),
   ('BOM', 'UTC+5:30', '19.0760° N, 72.8777° E', '09:00 AM - 09:00 PM', '4.5 hours'),
@@ -163,7 +163,7 @@ VALUES
 
 
   -- Populate Flight Table
-INSERT INTO Flight (id, airplane_number, from_location, to_location, arrival_departure_time, flight_duration, number_of_layovers)
+INSERT INTO Flight (id, airplane_number, from_location, to_location, arrival_time, flight_duration, number_of_layovers)
 VALUES
   (1, 100, 'DEL', 'BOM', '2023-11-30 08:00:00', 2.5, 0),
   (2, 134, 'BOM', 'CCU', '2023-06-02 09:00:00', 2.0, 1),

@@ -7,7 +7,7 @@ def create_connection():
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='your_new_password',
+        password='sql_utsav',
         database='flight_management_system'
     )
     cursor = connection.cursor()
@@ -73,7 +73,7 @@ def retrieve_operations():
             SELECT Flight.*
             FROM Flight
             WHERE Flight.from_location = '{specific_location}'
-            AND DATE(Flight.arrival_departure_time) = '{given_date}';
+            AND DATE(Flight.arrival_time) = '{given_date}';
         """
         execute_query(query)
 
@@ -106,7 +106,7 @@ def retrieve_operations():
         specific_flight_id = input("Enter the specific flight ID: ")
         # Retrieve the arrivial and departure along with the time and location for that flight
         query = f"""
-            SELECT Flight.arrival_departure_time, Flight.from_location, Flight.to_location
+            SELECT Flight.arrival_time, Flight.from_location, Flight.to_location
             FROM Flight
             WHERE Flight.id = '{specific_flight_id}';
         """
@@ -150,7 +150,7 @@ def search_operations():
     print("1. Retrieve the passengers whose name ends with 'Sharma', reservation ID starts with 'EMT', or flight number starts with '4'.")
     print("2. Retrieve the employees whose name starts with 'Hema', job title is 'Pilot', or department containing 'Field'.")
     print("3. Retrieve aircraft by number starting with '134' or type containing 'AB'.")
-    print("4. Retrieve a list of passengers in age group 25-40 who made reservations on flights going to Delhi on 18th November 2023.")
+    print("4. Retrieve a list of passengers in age group 0-100 who made reservations on flights going to CCU on 21 may, 2023.")
     print("0. Back to Main Menu")
 
     choice = input("Enter your choice (0-4): ")
@@ -192,9 +192,9 @@ def search_operations():
             FROM Passenger p
             JOIN Reservation r ON p.passenger_id = r.passenger_id
             JOIN Flight f ON r.flight_id = f.id
-            WHERE p.age BETWEEN 25 AND 40
-            AND f.to_location = 'BOM'
-            AND DATE(r.date) = '2023-05-20';
+            WHERE p.age BETWEEN 0 AND 100
+            AND f.to_location = 'CCU'
+            AND DATE(r.date) = '2023-05-21';
         """
         execute_query(query)
 
@@ -236,11 +236,11 @@ def insert_operations():
         airplane_number=input("airplane_number: ")
         from_location=input("from_location: ")
         to_location=input("to_location: ")
-        arrival_departure_time=input("arrival_departure_time: ")
+        arrival_time=input("arrival_time: ")
         flight_duration=input("flight_duration: ")
         number_of_layovers=input("number_of_layovers: ")
-        insert_query = "INSERT INTO Flight (id, airplane_number, from_location, to_location, arrival_departure_time, flight_duration, number_of_layovers) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        values = (id, airplane_number, from_location, to_location, arrival_departure_time, flight_duration, number_of_layovers)
+        insert_query = "INSERT INTO Flight (id, airplane_number, from_location, to_location, arrival_time, flight_duration, number_of_layovers) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        values = (id, airplane_number, from_location, to_location, arrival_time, flight_duration, number_of_layovers)
 
     else:
         print("Invalid choice. Please enter a table from that list.")
