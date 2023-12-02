@@ -291,7 +291,51 @@ def update_operations():
         update_operations()
     else:
         return
+def aggregate_operations():
+    print("press 1 to get flight with highest occupancy and 0 to return to main menu \n")
+    choice = input("Enter your choice (0 or 1): ")
+    
+    if choice == "1":
+        query = """
+            SELECT
+            f.id AS flight_id,
+            f.airplane_number,
+            f.from_location,
+            f.to_location,
+            f.arrival_time,
+            f.flight_duration,
+            f.number_of_layovers,
+            COUNT(r.id) AS occupancy
+        FROM
+            Flight f
+        JOIN
+            Reservation r ON f.id = r.flight_id
+        GROUP BY
+            f.id, f.airplane_number, f.from_location, f.to_location, f.arrival_time, f.flight_duration, f.number_of_layovers
+        ORDER BY
+            occupancy DESC
+        LIMIT 1;
 
+        """
+        execute_query(query)
+
+        # connection, cursor = create_connection()
+        # if connection and cursor:
+        #     try:
+        #         cursor.execute(query)
+        #         connection.commit()
+        #         print("Aggregate successfully!")
+        #     except mysql.connector.Error as error:
+        #         print("Error updation data:", error)
+        #     finally:
+        #         cursor.close()
+        #         connection.close()
+    elif choice == "0":
+        return
+    
+    else:
+        # print("bhaskar chutiya\n")
+        aggregate_operations()
 def delete_operations():
 
     print("1. Delete query")
@@ -327,7 +371,8 @@ while True:
     print("2. Insert Operations")
     print("3. Update Operations")
     print("4. Delete Operations")
-    print("5. Exit")
+    print("5. Aggregate Operations")
+    print("6. Exit")
 
     main_choice = input("Enter your choice (1-5): ")
 
@@ -346,8 +391,10 @@ while True:
     elif main_choice == '4':
         # Retrieve Operations
         delete_operations()
-
     elif main_choice == '5':
+        # Exit
+       aggregate_operations()
+    elif main_choice == '6':
         # Exit
         break
 
