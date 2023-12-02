@@ -7,7 +7,7 @@ def create_connection():
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='',
+        password='your_new_password',
         database='flight_management_system'
     )
     cursor = connection.cursor()
@@ -300,7 +300,20 @@ def delete_operations():
     table_name=input("Enter Table Name: ")
     condition=input("Enter condition: ")
     delete_query = f"DELETE FROM {table_name} WHERE {condition};"
-    execute_query(delete_query)
+    connection, cursor = create_connection()
+    if connection and cursor:
+        try:
+            cursor.execute(delete_query)
+            connection.commit()
+            print("Data Deleted successfully!")
+        except mysql.connector.Error as error:
+            print("Error updation data:", error)
+        finally:
+            cursor.close()
+            connection.close()
+    else:
+        print("Failed to connect to the database.")
+
 
     if choice==1:
         delete_operations()
